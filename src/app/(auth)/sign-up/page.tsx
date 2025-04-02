@@ -17,13 +17,33 @@ import {
 import { ArrowRight, Mail, Lock, User } from "lucide-react";
 import Header from "~/components/LandingPage/Header";
 import Footer from "~/components/LandingPage/Footer";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const SignUp = () => {
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  console.log(searchParams);
+
+  const UserType = searchParams.get("type");
+  console.log("tt", UserType);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const res = await signIn("google", {
+        callbackUrl: `/login?type=${UserType}`,
+      });
+      console.log("mm", res);
+    } catch (error) {
+      console.error("Error signing in:", error);
+    } finally {
+      // setIsLoading(false);
+    }
   };
 
   return (
@@ -39,7 +59,7 @@ const SignUp = () => {
             <p className="text-muted-foreground mt-2 text-sm">
               Already have an account?
               <button
-                onClick={() => router.push("/sign-in")}
+                onClick={() => router.push(`/login?type=${UserType}`)}
                 className="animated-underline font-medium text-purple-500 hover:text-purple-500/90"
               >
                 Sign in
@@ -148,7 +168,7 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" onClick={() => console.log("hii")}>
+                <Button variant="outline" onClick={() => handleGoogleSignUp()}>
                   <svg
                     className="mr-2 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"

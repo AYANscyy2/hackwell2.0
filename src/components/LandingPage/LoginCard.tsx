@@ -24,8 +24,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ title, description, type }) => {
 
   const handleLogin = () => {
     if (type === "allocator") {
-      router.push("/login/allocator");
-    } else router.push("login/employee");
+      router.push("/login?type=allocator");
+    } else router.push("login?type=employee");
   };
   const features =
     type === "allocator"

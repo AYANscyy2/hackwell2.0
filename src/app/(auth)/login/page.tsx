@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 // import { useNavigate } from 'react-router-dom';
 // import { useToast } from "@/components/ui/use-toast";
 import { Button } from "~/components/ui/button";
@@ -17,12 +17,36 @@ import {
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import Header from "~/components/LandingPage/Header";
 import Footer from "~/components/LandingPage/Footer";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+// import { signIn } from "~/server/auth";
 
 const SignIn = () => {
   const router = useRouter();
-  const handleSubmit = () => {
-    console.log("hi");
+  const searchParams = useSearchParams();
+  console.log(searchParams);
+  const [loading, setLoading] = useState(false);
+
+  const { data: session, status } = useSession();
+
+  console.log("Session:", session);
+  console.log("Auth Status:", status);
+
+  const UserType = searchParams.get("type");
+  console.log("tt", UserType);
+  const handleSubmit = async () => {
+    console.log(UserType);
+    try {
+      setLoading(true);
+      const res = await signIn("google", {
+        callbackUrl: `/dashboard?type=${UserType}`,
+      });
+      console.log("mm", res);
+    } catch (error) {
+      console.error("Error signing in:", error);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="flex min-h-screen flex-col">
@@ -37,7 +61,7 @@ const SignIn = () => {
             <p className="text-muted-foreground mt-2 text-sm">
               Or
               <button
-                onClick={() => router.push("/sign-up")}
+                onClick={() => router.push(`/sign-up?type=${UserType}`)}
                 className="animated-underline font-medium text-purple-500 hover:text-purple-500/90"
               >
                 create a new account
@@ -72,13 +96,13 @@ const SignIn = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => console.log("hii")}
                       className="text-primary hover:text-primary/90 animated-underline text-sm font-medium"
                     >
                       Forgot password?
-                    </button>
+                    </button> */}
                   </div>
                   <div className="relative">
                     <Lock className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
@@ -101,7 +125,8 @@ const SignIn = () => {
                   </Label>
                 </div>
                 <Button type="submit" className="w-full">
-                  Sign in <ArrowRight className="ml-2 h-4 w-4" />
+                  {loading ? "signing in ..." : `Sign in`}
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
             </CardContent>
@@ -117,7 +142,7 @@ const SignIn = () => {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" onClick={() => console.log("hii")}>
+                <Button variant="outline" onClick={() => handleSubmit()}>
                   <svg
                     className="mr-2 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
