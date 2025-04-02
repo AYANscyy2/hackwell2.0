@@ -1,7 +1,5 @@
 "use client";
-import React from "react";
-// import { useNavigate } from 'react-router-dom';
-// import { useToast } from "~/components/ui/use-toast";
+import React, { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -19,30 +17,148 @@ import Header from "~/components/LandingPage/Header";
 import Footer from "~/components/LandingPage/Footer";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { signUp } from "~/app/actions";
 
 const SignUp = () => {
   const router = useRouter();
-
   const searchParams = useSearchParams();
-  console.log(searchParams);
+  const userType = searchParams.get("type") ?? "user";
 
-  const UserType = searchParams.get("type");
-  console.log("tt", UserType);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    termsAccepted: false,
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    terms: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }));
+
+    if (errors[id as keyof typeof errors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [id]: "",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      terms: "",
+    };
+
+    let isValid = true;
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+
+    if (!formData.termsAccepted) {
+      newErrors.terms = "You must accept the terms";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = (await signUp({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        userRole: userType,
+      })) as { success: boolean; error?: string };
+
+      if (response.success) {
+        // If you have toast
+        // toast({
+        //   title: "Account created!",
+        //   description: "You have successfully signed up.",
+        //   variant: "default",
+        // });
+
+        router.push(`/login?type=${userType}&registered=true`);
+      } else {
+        if (response.error?.includes("already exists")) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "This email is already registered",
+          }));
+        } else {
+          alert(response.error ?? "Failed to create account");
+        }
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignUp = async () => {
+    setIsLoading(true);
     try {
       const res = await signIn("google", {
-        callbackUrl: `/login?type=${UserType}`,
+        callbackUrl: `/login?type=${userType}`,
       });
-      console.log("mm", res);
+      console.log("Google sign-in response:", res);
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("Error signing in with Google:", error);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -57,9 +173,9 @@ const SignUp = () => {
               Create a new account
             </h2>
             <p className="text-muted-foreground mt-2 text-sm">
-              Already have an account?
+              Already have an account?{" "}
               <button
-                onClick={() => router.push(`/login?type=${UserType}`)}
+                onClick={() => router.push(`/login?type=${userType}`)}
                 className="animated-underline font-medium text-purple-500 hover:text-purple-500/90"
               >
                 Sign in
@@ -83,9 +199,14 @@ const SignUp = () => {
                     <Input
                       id="name"
                       placeholder="John Doe"
-                      className="pl-10"
+                      className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
                       required
+                      value={formData.name}
+                      onChange={handleInputChange}
                     />
+                    {errors.name && (
+                      <p className="mt-1 text-xs text-red-500">{errors.name}</p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -96,9 +217,16 @@ const SignUp = () => {
                       id="email"
                       type="email"
                       placeholder="name@example.com"
-                      className="pl-10"
+                      className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
                       required
+                      value={formData.email}
+                      onChange={handleInputChange}
                     />
+                    {errors.email && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -109,9 +237,16 @@ const SignUp = () => {
                       id="password"
                       type="password"
                       placeholder="••••••••"
-                      className="pl-10"
+                      className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
                       required
+                      value={formData.password}
+                      onChange={handleInputChange}
                     />
+                    {errors.password && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -122,37 +257,58 @@ const SignUp = () => {
                       id="confirmPassword"
                       type="password"
                       placeholder="••••••••"
-                      className="pl-10"
+                      className={`pl-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
                       required
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
                     />
+                    {errors.confirmPassword && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" required />
+                  <Checkbox
+                    id="terms"
+                    required
+                    checked={formData.termsAccepted}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        termsAccepted: checked === true,
+                      }))
+                    }
+                  />
                   <Label
                     htmlFor="terms"
-                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className={`text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${errors.terms ? "text-red-500" : ""}`}
                   >
-                    I agree to the
+                    I agree to the{" "}
                     <button
                       type="button"
-                      onClick={() => console.log("hii")}
+                      onClick={() => window.open("/terms", "_blank")}
                       className="text-primary hover:text-primary/90 animated-underline"
                     >
                       Terms of Service
-                    </button>
-                    and
+                    </button>{" "}
+                    and{" "}
                     <button
                       type="button"
-                      onClick={() => console.log("hii")}
+                      onClick={() => window.open("/privacy", "_blank")}
                       className="text-primary hover:text-primary/90 animated-underline"
                     >
                       Privacy Policy
                     </button>
                   </Label>
                 </div>
-                <Button type="submit" className="w-full">
-                  Create account <ArrowRight className="ml-2 h-4 w-4" />
+                {errors.terms && (
+                  <p className="text-xs text-red-500">{errors.terms}</p>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Create account"}
+                  {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
               </form>
             </CardContent>
@@ -168,7 +324,11 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" onClick={() => handleGoogleSignUp()}>
+                <Button
+                  variant="outline"
+                  onClick={handleGoogleSignUp}
+                  disabled={isLoading}
+                >
                   <svg
                     className="mr-2 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
@@ -197,7 +357,11 @@ const SignUp = () => {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" onClick={() => console.log("hii")}>
+                <Button
+                  variant="outline"
+                  onClick={() => console.log("GitHub sign-in not implemented")}
+                  disabled={isLoading}
+                >
                   <svg
                     className="mr-2 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
