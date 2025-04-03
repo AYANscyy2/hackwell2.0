@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { SidebarProvider } from "~/components/ui/sidebar";
-import DashboardSidebar from "~/components/Dasboard/admin/Sidebar";
-import DashboardContent from "~/components/Dasboard/admin/DashboardContent";
+import DashboardSidebar from "~/components/admin/Dasboard/Sidebar";
+import DashboardContent from "~/components/admin/Dasboard/DashboardContent";
 import { useSearchParams } from "next/navigation";
 
 const Dashboard = () => {

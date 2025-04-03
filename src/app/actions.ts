@@ -6,14 +6,120 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
+  DocumentReference,
+} from "firebase/firestore";
+
+// import { db } from "~/lib/firebase/firebase/FirebaseConfig";
+// import {} from "firebase/firestore";
+
+type Priority = "low" | "medium" | "high";
+type Status = "unassigned" | "assigned" | "in-progress" | "completed";
+
+interface RequiredSkill {
+  id: string;
+  name: string;
+  minimumLevel: number;
+}
+
+interface TaskData {
+  title: string;
+  description: string;
+  priority: Priority;
+  estimatedHours: number;
+  project: string;
+  status: Status;
+  deadline: string;
+  requiredSkills: RequiredSkill[];
+}
+
+export async function createTask(taskData: TaskData) {
+  try {
+    if (!taskData.title || !taskData.description || !taskData.project) {
+      return {
+        success: false,
+        error: "Missing required fields",
+      };
+    }
+
+    const deadlineDate = new Date(taskData.deadline);
+    const currentDate = new Date();
+
+    if (isNaN(deadlineDate.getTime())) {
+      return {
+        success: false,
+        error: "Invalid deadline date",
+      };
+    }
+
+    if (deadlineDate < currentDate) {
+      return {
+        success: false,
+        error: "Deadline cannot be in the past",
+      };
+    }
+
+    const estimatedHours =
+      typeof taskData.estimatedHours === "string"
+        ? parseFloat(taskData.estimatedHours)
+        : taskData.estimatedHours;
+
+    if (isNaN(estimatedHours) || estimatedHours <= 0) {
+      return {
+        success: false,
+        error: "Estimated hours must be a positive number",
+      };
+    }
+
+    if (!taskData.requiredSkills || taskData.requiredSkills.length === 0) {
+      return {
+        success: false,
+        error: "At least one required skill must be specified",
+      };
+    }
+
+    const taskDocData = {
+      ...taskData,
+      estimatedHours: estimatedHours,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      assignedTo: null,
+      comments: [],
+      completionPercentage: 0,
+    };
+
+    const tasksCollection = collection(db, "tasks");
+    const taskDocRef: DocumentReference = await addDoc(
+      tasksCollection,
+      taskDocData,
+    );
+
+    return {
+      success: true,
+      message: "Task created successfully",
+      taskId: taskDocRef.id,
+    };
+  } catch (error: unknown) {
+    console.error("Error creating task:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create task",
+    };
+  }
+}
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function isValidPassword(password: string): boolean {
-  return password.length >= 6; // Minimum 6 characters
+  return password.length >= 6;
 }
 
 const validRoles = ["allocator", "employee", "editor"];
@@ -37,7 +143,7 @@ export async function signUp({
       return { error: "Missing required fields", success: false };
     }
 
-    email = email.trim().toLowerCase(); // Normalize email
+    email = email.trim().toLowerCase();
 
     if (!isValidEmail(email)) {
       return { error: "Invalid email format", success: false };
