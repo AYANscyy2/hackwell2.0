@@ -23,7 +23,7 @@ import { login } from "~/app/actions"; // Import your server action
 const SignIn = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const userType = searchParams.get("type") ?? "user";
+  const userType = searchParams.get("type");
   const justRegistered = searchParams.get("registered") === "true";
 
   const [formData, setFormData] = useState({
@@ -116,9 +116,9 @@ const SignIn = () => {
               Welcome back
             </h2>
             <p className="text-muted-foreground mt-2 text-sm">
-              Don&apos;t have an account?{" "}
+              Don&apos;t have an account?
               <button
-                onClick={() => router.push(`/signup?type=${userType}`)}
+                onClick={() => router.push(`/sign-up?type=${userType}`)}
                 className="animated-underline font-medium text-purple-500 hover:text-purple-500/90"
               >
                 Sign up
