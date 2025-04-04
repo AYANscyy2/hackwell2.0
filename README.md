@@ -1,36 +1,79 @@
-# Next.js Task Management Application
+# HackWell 2.0
 
-A full-stack task management application built with Next.js, featuring user authentication and a modern UI component library.
+A Next.js-based task management application with authentication, dashboard functionality, and a component-based architecture.
 
-## Architecture Overview
+## Project Structure
 
-This application follows a layered architecture with clear separation between frontend and backend concerns:
-
-### Frontend Layer
-
-- **Next.js App** - Core application built with Next.js
-- **Auth Pages** - Login and Sign-up pages for user authentication
-- **Dashboard & Tasks** - Main functionality for task management
-- **Global Providers** - Context providers for state management
-- **Reusable UI Library** - Component library for consistent UI elements
-
-### API & Backend
-
-- **NextAuth API Endpoint** - Authentication service integration
-- **Server Auth Logic** - Authentication configuration and processing
-- **Firebase Integration** - External service for authentication persistence
-
-### UI Components
-
-- **Landing Page UI** - Public-facing marketing page
-- **Login Page UI** - User authentication interface
-- **Admin Tasks UI** - Task management interface with Task Form and Details
-- **Admin Dashboard UI** - Overview dashboard with content panels and sidebar
+```
+├── .next                    # Next.js build output
+├── node_modules             # Dependencies
+├── public                   # Static assets
+├── src                      # Source code
+│   ├── app                  # Next.js App Router structure
+│   │   ├── auth             # Authentication routes
+│   │   │   ├── login        # Login functionality
+│   │   │   │   └── page.tsx # Login page
+│   │   │   └── sign-up      # Sign-up functionality
+│   │   │       └── page.tsx # Sign-up page
+│   │   ├── (pages)          # Group for standard pages
+│   │   │   ├── dashboard    # Dashboard routes
+│   │   │   │   └── page.tsx # Dashboard page
+│   │   │   └── tasks        # Task management routes
+│   │   │       ├── create-task  # Task creation
+│   │   │       └── page.tsx # Tasks listing page
+│   │   ├── api              # API routes
+│   │   │   └── auth         # Authentication API
+│   │   │       └── [...nextauth] # NextAuth.js configuration
+│   │   │           ├── route.ts  # API route handler
+│   │   │           └── actions.ts # Server actions
+│   │   ├── layout.tsx       # Root layout
+│   │   ├── page.tsx         # Home page
+│   │   └── providers.tsx    # React context providers
+│   ├── components           # Reusable components
+│   │   ├── admin            # Admin interface components
+│   │   │   ├── Dashboard    # Dashboard components
+│   │   │   │   ├── DashboardContent.tsx
+│   │   │   │   └── Sidebar.tsx
+│   │   │   └── tasks        # Task components
+│   │   │       ├── form.tsx # Task form
+│   │   │       └── taskDetails.tsx # Task details view
+│   │   ├── LandingPage      # Landing page components
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── LoginCard.tsx
+│   │   │   └── main.tsx
+│   │   ├── LoginPage        # Login page components
+│   │   │   └── LoginForm.tsx
+│   │   └── ui               # UI component library
+│   ├── hooks                # Custom React hooks
+│   │   └── use-mobile.ts    # Mobile detection hook
+│   ├── lib                  # Library code
+│   │   └── firebase         # Firebase integration
+│   │       ├── FirebaseAuth.ts # Firebase auth methods
+│   │       └── FirebaseConfig.ts # Firebase configuration
+│   ├── server               # Server-side code
+│   │   └── auth             # Authentication logic
+│   │       ├── config.ts    # Auth configuration
+│   │       └── index.ts     # Auth exports
+│   └── styles               # Global styles
+│       └── globals.css      # Global CSS
+├── .env                     # Environment variables
+├── .env.example             # Example environment variables
+├── .gitignore               # Git ignore file
+├── components.json          # UI components configuration
+├── next-env.d.ts            # Next.js TypeScript declarations
+├── next.config.js           # Next.js configuration
+├── package-lock.json        # Dependency lock file
+├── package.json             # Project metadata and dependencies
+├── postcss.config.js        # PostCSS configuration
+├── prettier.config.js       # Prettier configuration
+├── README.md                # Project documentation
+└── tsconfig.json            # TypeScript configuration
+```
 
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js (v16 or later)
 - npm or yarn
 - Firebase account (for authentication)
@@ -38,14 +81,12 @@ This application follows a layered architecture with clear separation between fr
 ### Installation
 
 1. Clone the repository
-
 ```bash
-git clone https://github.com/yourusername/nextjs-task-management.git
-cd nextjs-task-management
+git clone https://github.com/yourusername/hackwell2.0.git
+cd hackwell2.0
 ```
 
 2. Install dependencies
-
 ```bash
 npm install
 # or
@@ -53,8 +94,7 @@ yarn install
 ```
 
 3. Set up environment variables
-   Create a `.env.local` file in the root directory with the following variables:
-
+Create a `.env.local` file in the root directory based on `.env.example`:
 ```
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your_nextauth_secret
@@ -69,7 +109,6 @@ FIREBASE_APP_ID=your_firebase_app_id
 ```
 
 4. Run the development server
-
 ```bash
 npm run dev
 # or
@@ -81,47 +120,37 @@ yarn dev
 ## Features
 
 - **User Authentication**
-
   - Login and signup functionality
   - Integration with Firebase Authentication
-  - Secure authentication flow
+  - Secure authentication flow with NextAuth.js
 
 - **Task Management**
-
   - Create, view, and manage tasks
-  - Task listing with filtering and sorting options
-  - Detailed task view with status tracking
-
-- **Dashboard**
-
-  - Overview of task status and progress
-  - Customizable dashboard components
-  - Responsive layout for all device sizes
+  - Task listing with details view
+  - Dashboard for task overview
 
 - **Responsive Design**
-  - Mobile-friendly interface
+  - Mobile-friendly interface using custom hooks
   - Consistent UI across devices
 
-## Project Structure
+## Application Architecture
 
-```
-├── components/
-│   ├── ui/                   # Reusable UI components
-│   ├── auth/                 # Authentication components
-│   ├── dashboard/            # Dashboard components
-│   └── tasks/                # Task management components
-├── pages/
-│   ├── api/                  # API routes
-│   │   └── auth/             # NextAuth configuration
-│   ├── auth/                 # Auth pages
-│   ├── dashboard/            # Dashboard pages
-│   └── tasks/                # Task management pages
-├── hooks/                    # Custom React hooks
-├── utils/                    # Utility functions
-├── providers/                # Context providers
-├── public/                   # Static assets
-└── styles/                   # Global styles
-```
+### Frontend Layer
+- **Next.js App Router** - Modern routing with file-based routing system
+- **Authentication Pages** - Dedicated login and sign-up interfaces
+- **Dashboard & Tasks** - Main application functionality
+- **Component Structure** - Modular, reusable components
+
+### API & Backend
+- **NextAuth API Endpoint** - Authentication service implementation
+- **Server Auth Logic** - Server-side authentication processing
+- **Firebase Integration** - External service for user management
+
+### UI Components
+- **Admin Components** - Dashboard and task management interfaces
+- **Landing Page** - Public-facing marketing page
+- **Login Page** - Authentication interface
+- **UI Library** - Shared UI components
 
 ## Authentication Flow
 
@@ -131,9 +160,21 @@ yarn dev
 4. Firebase Auth verifies the credentials
 5. Upon successful authentication, user is redirected to the Dashboard
 
+## Development
+
+### Component Structure
+The project follows a component-based architecture with:
+- Reusable UI components in `src/components/ui`
+- Page-specific components organized by feature
+- Admin components for dashboard and task management
+
+### Styling
+- Global styles in `src/styles/globals.css`
+- Component-level styling using CSS modules or inline Tailwind classes
+
 ## Deployment
 
-This application can be deployed on Vercel for optimal Next.js performance:
+The application is configured for easy deployment on Vercel:
 
 ```bash
 npm run build
@@ -141,38 +182,22 @@ npm run build
 yarn build
 ```
 
-Then deploy using the Vercel CLI or connect your repository to Vercel for automatic deployments.
-
 ## Technologies Used
 
 - **Frontend**:
-
-  - Next.js
+  - Next.js (App Router)
   - React
-  - CSS Modules / Tailwind CSS
+  - TypeScript
+  - Tailwind CSS
 
 - **Authentication**:
-
   - NextAuth.js
   - Firebase Authentication
-
-- **State Management**:
-
-  - React Context API
-  - Custom hooks
 
 - **Development Tools**:
   - ESLint
   - Prettier
-  - TypeScript
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+  - PostCSS
 
 ## License
 
