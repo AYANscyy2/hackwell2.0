@@ -14,6 +14,7 @@ import {
   addDoc,
   serverTimestamp,
   DocumentReference,
+  getDocs,
 } from "firebase/firestore";
 
 // import { db } from "~/lib/firebase/firebase/FirebaseConfig";
@@ -270,6 +271,31 @@ export async function checkUserExists(email: string) {
     return {
       error: error instanceof Error ? error.message : "Something went wrong",
       success: false,
+    };
+  }
+}
+
+export async function getAllTasks() {
+  try {
+    const tasksCollection = collection(db, "tasks");
+    const tasksSnapshot = await getDocs(tasksCollection);
+
+    const tasks = tasksSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || null,
+        updatedAt: data.updatedAt?.toDate().toISOString() || null,
+      };
+    });
+
+    return { success: true, data: tasks };
+  } catch (error: unknown) {
+    console.error("Error fetching tasks:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to fetch tasks",
     };
   }
 }

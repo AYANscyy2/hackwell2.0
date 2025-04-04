@@ -1,49 +1,46 @@
+"use client";
+import Link from "next/link";
 import TaskDetails from "~/components/admin/tasks/taskDetails";
-
-// Example task data
-const taskData: {
-  assignedTo: string | null;
-  comments: any[];
-  completionPercentage: number;
-  createdAt: string;
-  deadline: string;
-  description: string;
-  estimatedHours: number;
-  priority: "medium" | "low" | "high";
-  project: string;
-  requiredSkills: { id: string; minimumLevel: number; name: string }[];
-  status: string;
-  title: string;
-  updatedAt: string;
-} = {
-  assignedTo: null,
-  comments: [],
-  completionPercentage: 0,
-  createdAt: "2025-04-03T16:22:24.000Z",
-  deadline: "2025-04-04",
-  description: "bxbxbbxbxbxxbxbbxbxbxbxbbxxbxbxbxbxbxbxbxbxbx",
-  estimatedHours: 44,
-  priority: "medium",
-  project: "cc",
-  requiredSkills: [
-    {
-      id: "skill3",
-      minimumLevel: 4,
-      name: "TypeScript",
-    },
-    {
-      id: "skill1",
-      minimumLevel: 3,
-      name: "React",
-    },
-  ],
-  status: "unassigned",
-  title: "hloo",
-  updatedAt: "2025-04-03T16:22:24.000Z",
-};
+import { Button } from "~/components/ui/button";
+import { getAllTasks } from "~/app/actions";
+import { useEffect, useState } from "react";
 
 function Tasks() {
-  return <TaskDetails task={taskData} />;
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+      async function fetchTasks() {
+        const response = await getAllTasks();
+        if (response.success && response.data) {
+          setTasks(response.data);
+        } else {
+          setTasks([]); 
+        }
+        setLoading(false);
+      }
+      fetchTasks();
+    }, []);
+
+  if (loading) {
+    return <p>Loading tasks...</p>;
+  }
+
+  return (
+    <>
+      <Link href={`/dashboard`}>
+        <Button className="absolute top-5 right-5" variant="default">
+          Back to Dashboard
+        </Button>
+      </Link>
+      {tasks.length > 0 ? (
+        tasks.map((task) => <TaskDetails key={task.id} task={task} />)
+      ) : (
+        <p>No tasks available</p>
+      )}
+    </>
+  );
 }
 
 export default Tasks;

@@ -77,7 +77,7 @@ const DashboardContent = ({ type }: { type: string }) => {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <Button
             onClick={() => {
-              router.push(`/dashboard/tasks?type=${type}`);
+              router.push(`/dashboard/tasks/create-task?type=${type}`);
             }}
             variant="default"
             className="cursor-pointer"

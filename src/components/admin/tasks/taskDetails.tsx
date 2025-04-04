@@ -25,12 +25,13 @@ interface RequiredSkill {
   minimumLevel: number;
 }
 
-interface TaskDetailsProps {
+export interface TaskDetailsProps {
   task: {
+    id?: "" | undefined;
     assignedTo?: string | null;
     comments: any[];
     completionPercentage: number;
-    createdAt: string;
+    createdAt: any;
     deadline: string;
     description: string;
     estimatedHours: number;
