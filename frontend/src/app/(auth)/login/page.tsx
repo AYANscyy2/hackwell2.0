@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button } from "frontend/src/components/ui/button";
-import { Input } from "frontend/src/components/ui/input";
-import { Label } from "frontend/src/components/ui/label";
-import { Checkbox } from "frontend/src/components/ui/checkbox";
+import { Button } from "src/components/ui/button";
+import { Input } from "src/components/ui/input";
+import { Label } from "src/components/ui/label";
+import { Checkbox } from "src/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -11,13 +11,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "frontend/src/components/ui/card";
+} from "src/components/ui/card";
 import { ArrowRight, Mail, Lock } from "lucide-react";
-import Header from "frontend/src/components/LandingPage/Header";
-import Footer from "frontend/src/components/LandingPage/Footer";
+import Header from "src/components/LandingPage/Header";
+import Footer from "src/components/LandingPage/Footer";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { login } from "frontend/src/app/actions"; // Import your server action
+import { login } from "src/app/actions"; // Import your server action
 // import { useToast } from "~/components/ui/use-toast"; // Uncomment if available
 
 const SignIn = () => {

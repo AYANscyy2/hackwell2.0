@@ -1,6 +1,6 @@
 import Link from "next/link";
-import TaskForm from "frontend/src/components/admin/tasks/form";
-import { Button } from "frontend/src/components/ui/button";
+import TaskForm from "src/components/admin/tasks/form";
+import { Button } from "src/components/ui/button";
 
 const CreateTask = () => {
   return (
