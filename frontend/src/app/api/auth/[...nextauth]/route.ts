@@ -1,3 +1,3 @@
-import { handlers } from "frontend/src/server/auth";
+import { handlers } from "src/server/auth";
 
 export const { GET, POST } = handlers;
