@@ -9,18 +9,18 @@ import {
   type FieldProps,
 } from "formik";
 import * as Yup from "yup";
-import { Button } from "frontend/src/components/ui/button";
-import { Input } from "frontend/src/components/ui/input";
-import { Textarea } from "frontend/src/components/ui/textarea";
-import { Label } from "frontend/src/components/ui/label";
+import { Button } from "src/components/ui/button";
+import { Input } from "src/components/ui/input";
+import { Textarea } from "src/components/ui/textarea";
+import { Label } from "src/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "frontend/src/components/ui/select";
-import { Checkbox } from "frontend/src/components/ui/checkbox";
+} from "src/components/ui/select";
+import { Checkbox } from "src/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -28,16 +28,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "frontend/src/components/ui/card";
+} from "src/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "frontend/src/components/ui/tooltip";
-import { Badge } from "frontend/src/components/ui/badge";
+} from "src/components/ui/tooltip";
+import { Badge } from "src/components/ui/badge";
 import { InfoIcon, ClipboardList } from "lucide-react";
-import { createTask } from "frontend/src/app/actions";
+import { createTask } from "src/app/actions";
 
 type Priority = "low" | "medium" | "high";
 type Status = "unassigned" | "assigned" | "in-progress" | "completed";

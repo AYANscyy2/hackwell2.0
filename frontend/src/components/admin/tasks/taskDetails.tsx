@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "frontend/src/components/ui/card";
-import { Badge } from "frontend/src/components/ui/badge";
+} from "src/components/ui/card";
+import { Badge } from "src/components/ui/badge";
 import {
   ClipboardList,
   Calendar,
@@ -17,7 +17,7 @@ import {
   GitBranch,
   CheckCircle2,
 } from "lucide-react";
-import { Progress } from "frontend/src/components/ui/progress";
+import { Progress } from "src/components/ui/progress";
 
 interface RequiredSkill {
   id: string;

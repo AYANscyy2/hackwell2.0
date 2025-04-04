@@ -5,7 +5,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "frontend/src/components/ui/sidebar";
+} from "src/components/ui/sidebar";
 import { LayoutGrid, Users, BarChart2, Settings } from "lucide-react";
 import Link from "next/link";
 

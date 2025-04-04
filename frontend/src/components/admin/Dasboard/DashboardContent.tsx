@@ -1,7 +1,7 @@
 import React from "react";
-import { SidebarInset } from "frontend/src/components/ui/sidebar";
-import { Avatar } from "frontend/src/components/ui/avatar";
-import { Card, CardContent } from "frontend/src/components/ui/card";
+import { SidebarInset } from "src/components/ui/sidebar";
+import { Avatar } from "src/components/ui/avatar";
+import { Card, CardContent } from "src/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -9,9 +9,9 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "frontend/src/components/ui/table";
+} from "src/components/ui/table";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from "recharts";
-import { Button } from "frontend/src/components/ui/button";
+import { Button } from "src/components/ui/button";
 import { useRouter } from "next/navigation";
 
 const chartData = [
