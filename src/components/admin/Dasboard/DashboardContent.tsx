@@ -14,7 +14,6 @@ import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 
-// Dummy data for the task statistics chart
 const chartData = [
   { name: "Mon", tasks: 7 },
   { name: "Tue", tasks: 10 },
@@ -24,19 +23,17 @@ const chartData = [
   { name: "Sun", tasks: 13 },
 ];
 
-// Dummy data for available individuals
 const availableIndividuals = [
-  { id: 1, name: "Alice Smith", role: "Designer", avatarColor: "bg-blue-500" },
-  { id: 2, name: "John Doe", role: "Developer", avatarColor: "bg-indigo-500" },
+  { id: 1, name: "Alice Smith", role: "Designer", avatarColor: "bg-black" },
+  { id: 2, name: "John Doe", role: "Developer", avatarColor: "bg-black/[0.5]" },
   {
     id: 3,
     name: "Emily Johnson",
     role: "Analyst",
-    avatarColor: "bg-green-500",
+    avatarColor: "bg-black/[0.8]",
   },
 ];
 
-// Dummy data for tasks
 const tasks = [
   {
     id: 1,
@@ -128,7 +125,7 @@ const DashboardContent = ({ type }: { type: string }) => {
                   >
                     <XAxis dataKey="name" />
                     <Tooltip />
-                    <Bar dataKey="tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="tasks" fill="#000000" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
